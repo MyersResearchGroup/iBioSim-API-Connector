@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "durable-functions": "^2.0.2",
-    "node-fetch": "^3.2.6"
+    "node-fetch": "^3.2.6",
+    "unzipper": "^0.10.11"
   }
 }

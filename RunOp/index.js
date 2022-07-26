@@ -1,4 +1,5 @@
-﻿
+﻿const unzipper = require('unzipper')
+
 module.exports = async function (context) {
 
     // dynamic import b/c node-fetch is ESM only
@@ -19,13 +20,25 @@ module.exports = async function (context) {
         }
     )
 
-    // Convert to a regular array of bytes so DF can handle it
-    const responseData = Array.from(
-        new Uint8Array(await response.arrayBuffer())
-    )
+    // Unzip response and send contents as strings
+    const responseData = {}
+    const zip = response.body.pipe(unzipper.Parse({ forceStream: true }))
+    for await (const entry of zip) {
+        responseData[entry.path] = await streamToString(entry)
+    }
 
     return {
         data: responseData,
         status: response.status
     }
+}
+
+
+function streamToString(stream) {
+    const chunks = []
+    return new Promise((resolve, reject) => {
+        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+        stream.on('error', (err) => reject(err))
+        stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
+    })
 }
