@@ -10,7 +10,7 @@ module.exports = async function (context) {
 
     // execute request
     const response = await fetch(
-        `https://ibiosim-api.wittyfield-d51873c4.westus.azurecontainerapps.io/sync/${operation}`,
+        `https://ibiosim-api.yellowsea-87128a49.westus.azurecontainerapps.io/sync/${operation}`,
         {
             method: 'POST',
             headers: {
