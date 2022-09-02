@@ -1,6 +1,7 @@
 ﻿
 const ibiosimFallback = "http://localhost:4000"
 const applicationUrlFallback = "http://host.docker.internal:7071"
+const systemKeyFallback = ""
 
 module.exports = async function (context) {
 
@@ -11,7 +12,7 @@ module.exports = async function (context) {
     const { operation, data, contentTypeHeader } = context.bindings.input
 
     // attach callback to request
-    const callbackUrl = `${process.env.APPLICATION_URL || applicationUrlFallback}/runtime/webhooks/durabletask/instances/${context.bindingData.instanceId}/raiseEvent/{event}`
+    const callbackUrl = `${process.env.APPLICATION_URL || applicationUrlFallback}/runtime/webhooks/durabletask/instances/${context.bindingData.instanceId}/raiseEvent/{event}?code=${process.env.SYSTEM_KEY || systemKeyFallback}`
     const fixedData = addToFormData(data, {
         callback: callbackUrl,
         json: true,
@@ -23,7 +24,7 @@ module.exports = async function (context) {
         {
             method: 'POST',
             headers: {
-                'Content-Type': contentTypeHeader
+                'Content-Type': contentTypeHeader,
             },
             body: Buffer.from(fixedData)
         }
