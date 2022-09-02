@@ -14,7 +14,7 @@ module.exports = df.orchestrator(function* (context) {
 
     // check for errors in the fetch
     if (response.status >= 400)
-        throw new Error(`Received bad status from iBioSim API: ${response.status}`)
+        throw new Error(`Received bad status from iBioSim API: ${response.status}\n${response.data}`)
 
     // wait for either a "complete" or "error" event
     const completeEvent = context.df.waitForExternalEvent("complete")

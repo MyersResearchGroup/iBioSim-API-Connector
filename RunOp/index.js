@@ -31,7 +31,8 @@ module.exports = async function (context) {
     )
 
     return {
-        status: response.status
+        status: response.status,
+        data: await response.text()
     }
 }
 
@@ -39,7 +40,7 @@ module.exports = async function (context) {
 function addToFormData(data, pairsToAdd) {
 
     const asString = Buffer.from(data).toString()
-    const boundary = asString.match(/-{10,}[\S]+/)?.[0]
+    const boundary = asString.match(/-{3,}[\S]+/)?.[0]
 
     return Object.entries(pairsToAdd).reduce((accum, [key, value]) =>
         `${boundary}\r
