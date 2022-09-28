@@ -26,7 +26,7 @@ module.exports = async function (context) {
             headers: {
                 'Content-Type': contentTypeHeader,
             },
-            body: Buffer.from(fixedData)
+            body: fixedData
         }
     )
 
@@ -37,16 +37,18 @@ module.exports = async function (context) {
 }
 
 
-function addToFormData(data, pairsToAdd) {
+function addToFormData(data, pairsToAdd, encoding = "latin1") {
 
-    const asString = Buffer.from(data).toString()
+    const asString = Buffer.from(data).toString(encoding)
     const boundary = asString.match(/-{3,}[\S]+/)?.[0]
 
-    return Object.entries(pairsToAdd).reduce((accum, [key, value]) =>
+    const fixedString = Object.entries(pairsToAdd).reduce((accum, [key, value]) =>
         `${boundary}\r
 Content-Disposition: form-data; name="${key}"\r
 \r
 ${value}\r
 ${accum}`
         , asString)
+    
+    return Buffer.from(fixedString, encoding)
 }
