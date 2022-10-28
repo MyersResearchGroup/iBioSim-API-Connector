@@ -33,5 +33,5 @@ module.exports = df.orchestrator(function* (context) {
 
     // otherwise received error
     console.error(winner.result)
-    throw Error("Received error event.")
+    throw Error("Received error event.\n" + JSON.stringify(winner?.result))
 })
