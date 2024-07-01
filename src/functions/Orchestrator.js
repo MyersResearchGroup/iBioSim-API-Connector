@@ -1,19 +1,18 @@
-﻿const df = require("durable-functions")
+const df = require('durable-functions');
 
-
-module.exports = df.orchestrator(function* (context) {
-
+df.app.orchestration('Orchestrator', function* (context) {
     const req = context.df.getInput()
-
+    
     // hit API running on Container Apps
     const response = yield context.df.callActivity("RunOp", {
-        operation: req.params.opName,
-        data: req.body.data,
-        contentTypeHeader: req.headers['content-type']
+        operation: req.opName,
+        data: req.data,
+        contentTypeHeader: req.header,
+        instanceId: context.df.instanceId
     })
 
-    // check for errors in the fetch
-    if (response.status >= 400)
+     // check for errors in the fetch
+     if (response.status >= 400)
         throw new Error(`Received bad status from iBioSim API: ${response.status}\n${response.data}`)
 
     // wait for either a "complete" or "error" event
@@ -34,4 +33,4 @@ module.exports = df.orchestrator(function* (context) {
     // otherwise received error
     console.error(winner.result)
     throw Error("Received error event.\n" + JSON.stringify(winner?.result))
-})
+});
